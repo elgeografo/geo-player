@@ -1,0 +1,171 @@
+{
+  "animations": [
+    {
+      "id": "Vista en Planta",
+      "title": "Vista en planta del proyecto. Se pide realizar una explanación vertical.",
+      "description": "El desmonte tendrá un 50% y el terraplén un 40%. La equisistancia es de 10 metros.",
+      "duration": 2,
+      "waitTime": 10,
+      "type": "camera",
+      "camera": {
+        "target": [8382, 1445, -9.5],
+        "zoom": -1.5,
+        "rotationOrbit": -1.2,
+        "rotationX": 90
+      }
+    },
+    {
+      "id": "proyecto_este",
+      "title": "Vista aérea general desde sureste",
+      "description": "La explanación será un cuadrado de 140 metros de lado.",
+      "duration": 4,
+      "waitTime": 0,
+      "type": "camera",
+      "camera": {
+        "target": [8220, 1653, 95],
+        "zoom": -2,
+        "rotationOrbit": -42.5,
+        "rotationX": 46.9
+      }
+    },
+    {
+      "id": "proyecto_oeste",
+      "title": "Vista aérea general desde el suroeste",
+      "description": "La cota de la explación será de 620 metros.",
+      "duration": 2,
+      "waitTime": 3.5,
+      "type": "camera",
+      "camera": {
+        "target": [8300, 1786, 270],
+        "zoom": -1,
+        "rotationOrbit": 30,
+        "rotationX": 34.5
+      }
+    },
+    { "id": "linea_de_paso",
+      "title": "Lo primero que tendremos que hacer es calcular la linea de paso",
+      "description": "En este caso, la linea de paso será la curva de nivel con cota 620.",
+      "duration": 1.5,
+      "waitTime": 3,
+      "type": "layers",
+      "layers": {
+        "directoras": true,
+        "simples": true,
+        "plataforma": true,
+        "linea_paso": true,
+        "desmonte": false,
+        "terraplen": false,
+        "cabecera_talud": false,
+        "directoras_externas": false,
+        "curvas_externas": false
+      }
+    },
+    {
+      "id": "cabecera_oeste_desmonte",
+      "title": "Calculo de cabecera de talud en desmonte zona oeste",
+      "description": "Marcaremos los puntos de coincidencia de las nuevas cotas del desmonte con las del terreno original.",
+      "duration": 2,
+      "waitTime": 3.5,
+      "type": "camera",
+      "camera": {
+        "target": [8282.8, 1712.0, 169.9],
+        "zoom": -0.95,
+        "rotationOrbit": -10.5,
+        "rotationX": 45.1
+      }
+    },
+    {
+      "id": "cabecera_oeste_desmonte_detalle",
+      "title": "Cálculo de cabecera de talud (2)",
+      "description": "Marcamos todos los puntos empezando por la linea de paso, que es el punto de coincidencia del terreno original con la explanada.",
+      "duration": 1.8,
+      "waitTime": 5,
+      "type": "image",
+      "image": "img/capturaDesmonte1.PNG"
+    },
+    {
+      "id": "cabecera_norte_desmonte_detalle",
+      "title": "Cálculo de cabecera norte",
+      "description": "Marcamos todos los puntos de coincidencia hasta donde podamos.",
+      "duration": 1.8,
+      "waitTime": 5,
+      "type": "image",
+      "image": "img/capturaDesmonte2.PNG"
+    },
+    {
+      "id": "cierre_de_planos",
+      "title": "Cierre de planos",
+      "description": "El cierre lo hacemos cortando una de las cabeceras de talud con la recta que une los dos planos de desmonte.",
+      "duration": 1.8,
+      "waitTime": 5,
+      "type": "image",
+      "image": "img/cierreDesmonte1y2.PNG"
+    },
+    {
+      "id": "show_taludes",
+      "title": "Visualización de cabecera de talud",
+      "description": "Calculada la cabecera de talud quitaremos las curvas de nivel antiguas.",
+      "duration": 6,
+      "waitTime": 0,
+      "type": "layers",
+      "layers": {
+        "directoras": false,
+        "simples": false,
+        "plataforma": true,
+        "linea_paso": false,
+        "desmonte": false,
+        "terraplen": false,
+        "cabecera_talud": true,
+        "directoras_externas": true,
+        "curvas_externas": true
+      }
+    },
+    {
+      "id": "show_taludes",
+      "title": "Visualización de los nuevos taludes",
+      "description": "activamos la capa que hemos calculado para el desmonte y el terraplen.",
+      "duration": 6,
+      "waitTime": 0,
+      "type": "layers",
+      "layers": {
+        "directoras": false,
+        "simples": false,
+        "plataforma": true,
+        "linea_paso": false,
+        "desmonte": true,
+        "terraplen": true,
+        "cabecera_talud": true,
+        "directoras_externas": true,
+        "curvas_externas": true
+      }
+    },
+    {
+      "id": "camera_final",
+      "title": "Vista final del proyecto",
+      "description": "Posición de cámara final que ofrece una vista tridimensional equilibrada de todo el conjunto, ideal para apreciar la complejidad del trazado.",
+      "duration": 5,
+      "waitTime": 5,
+      "type": "camera",
+      "camera": {
+        "target": [8475.7, 1693.6, 321.3],
+        "zoom": -0.95,
+        "rotationOrbit": 60,
+        "rotationX": 37.5
+      }
+    },
+     {
+      "id": "camera_final2",
+      "title": "Vista final del proyecto",
+      "description": "Posición de cámara final que ofrece una vista tridimensional equilibrada de todo el conjunto, ideal para apreciar la complejidad del trazado.",
+      "duration": 5,
+      "waitTime": 5,
+      "type": "camera",
+      "camera": {
+        "target": [8203.0, 1791.8, 318.4],
+        "zoom": -0.95,
+        "rotationOrbit": -19.8,
+        "rotationX": 28.5
+      }
+    }
+  ]
+}

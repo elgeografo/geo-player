@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Curvas y plataforma 3D (metros) - deck.gl</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #000;
+    }
+    #container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+    #controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 10px 12px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      font-size: 13px;
+      border-radius: 4px;
+      z-index: 1;
+    }
+    #controls h3 {
+      margin: 0 0 4px 0;
+      font-size: 14px;
+    }
+    #controls label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 3px;
+      cursor: pointer;
+    }
+    #controls input[type="checkbox"] {
+      cursor: pointer;
+    }
+    #info {
+      margin-top: 6px;
+      font-size: 12px;
+      opacity: 0.85;
+    }
+
+    /* Panel de animaciones */
+    #animation-panel {
+      position: absolute;
+      left: 10px;
+      bottom: 10px;
+      width: 280px;
+      max-height: 60vh;
+      background: rgba(0,0,0,0.85);
+      color: #fff;
+      border-radius: 4px;
+      z-index: 2;
+      overflow: hidden;
+      transition: width 0.3s ease;
+    }
+    #animation-panel.collapsed {
+      width: 50px;
+    }
+    #animation-panel-header {
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    #animation-panel.collapsed #animation-panel-header {
+      justify-content: center;
+    }
+    #animation-panel-title {
+      flex: 1;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    #animation-panel.collapsed #animation-panel-title {
+      display: none;
+    }
+    #toggle-panel {
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #toggle-panel:hover {
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+    }
+    #animation-controls {
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    #animation-panel.collapsed #animation-controls {
+      display: none;
+    }
+    .control-btn {
+      flex: 1;
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background 0.2s;
+    }
+    .control-btn:hover {
+      background: rgba(255,255,255,0.25);
+    }
+    .control-btn:active {
+      background: rgba(255,255,255,0.35);
+    }
+    #animation-list {
+      max-height: 40vh;
+      overflow-y: auto;
+    }
+    #animation-panel.collapsed #animation-list {
+      display: none;
+    }
+    .animation-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background 0.2s;
+      font-size: 12px;
+    }
+    .animation-item:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    .animation-item.active {
+      background: rgba(80, 160, 255, 0.3);
+      border-left: 3px solid #50a0ff;
+    }
+
+    /* Información de cámara */
+    #camera-info {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      font-size: 11px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      z-index: 1;
+      line-height: 1.4;
+    }
+    #camera-info div {
+      margin-bottom: 2px;
+    }
+
+    /* Contenedor de información de animación */
+    #animation-info {
+      position: absolute;
+      top: 10px;
+      left: 320px;
+      right: 320px;
+      padding: 12px 16px 16px 16px;
+      background: rgba(0,0,0,0.85);
+      color: #fff;
+      border-radius: 4px;
+      z-index: 1;
+      display: none;
+    }
+    #animation-info.visible {
+      display: block;
+    }
+    #animation-info h2 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    #animation-info p {
+      margin: 0 0 12px 0;
+      font-size: 13px;
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    /* Barra de progreso */
+    #progress-container {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+    #progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #50a0ff, #8bc0ff);
+      width: 0%;
+      transition: width 0.1s linear;
+      border-radius: 3px;
+    }
+    #progress-time {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    /* Contenedor de imagen */
+    #image-container {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 300px;
+      height: 300px;
+      background: rgba(0,0,0,0.85);
+      border-radius: 4px;
+      overflow: hidden;
+      z-index: 3;
+      display: none;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    #image-container.visible {
+      display: block;
+    }
+    #image-container:hover {
+      transform: scale(1.02);
+    }
+    #image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Modal de imagen */
+    #image-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    #image-modal.visible {
+      display: flex;
+    }
+    #image-modal img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+
+  <div id="controls">
+    <h3>Capas</h3>
+    <div id="layers-checkboxes">
+      <!-- Los checkboxes se generarán dinámicamente desde config.json -->
+    </div>
+
+    <div id="info">
+      Rueda: zoom · Arrastrar: mover · Shift+arrastrar: rotar
+    </div>
+  </div>
+
+  <!-- Panel de animaciones -->
+  <div id="animation-panel">
+    <div id="animation-panel-header">
+      <span id="animation-panel-title">Animaciones</span>
+      <button id="toggle-panel" title="Expandir/Contraer">◀</button>
+    </div>
+    <div id="animation-controls">
+      <button class="control-btn" id="play-btn">▶ Play</button>
+      <button class="control-btn" id="pause-btn">⏸ Pause</button>
+    </div>
+    <div id="animation-list">
+      <!-- Lista de animaciones se generará dinámicamente -->
+    </div>
+  </div>
+
+  <!-- Información de cámara -->
+  <div id="camera-info">
+    <div>Target: <span id="cam-target">-</span></div>
+    <div>Zoom: <span id="cam-zoom">-</span></div>
+    <div>Rotation: <span id="cam-rotation">-</span></div>
+    <div>Pitch: <span id="cam-pitch">-</span></div>
+  </div>
+
+  <!-- Información de animación actual -->
+  <div id="animation-info">
+    <h2 id="anim-title"></h2>
+    <p id="anim-description"></p>
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+    <div id="progress-time">Siguiente en: <span id="time-remaining">0</span>s</div>
+  </div>
+
+  <!-- Contenedor de imagen -->
+  <div id="image-container">
+    <img id="animation-image" src="" alt="">
+  </div>
+
+  <!-- Modal de imagen expandida -->
+  <div id="image-modal">
+    <img id="modal-image" src="" alt="">
+  </div>
+
+  <script src="animation-controller.js"></script>
+  <script>
+    const {DeckGL, GeoJsonLayer, OrbitView, COORDINATE_SYSTEM} = deck;
+
+    // La configuración de capas se cargará desde config.json
+    let LAYERS_CONFIG = [];
+    let dataByKey = {}; // aquí guardaremos los GeoJSON cargados
+    const infoDiv = document.getElementById('info');
+
+    // Vista inicial se cargará desde config.json
+    let initialViewState = {
+      target: [0, 0, 0],
+      zoom: 0,
+      rotationOrbit: 0,
+      rotationX: 60
+    };
+
+    const deckgl = new DeckGL({
+      container: 'container',
+      views: [new OrbitView()],
+      initialViewState,
+      controller: true,
+      layers: []
+    });
+
+    // Helpers para bounds y Z
+    function getBounds(geojson) {
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+      function addCoord(coord) {
+        const x = coord[0];
+        const y = coord[1];
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+      }
+
+      function processGeom(geom) {
+        if (!geom) return;
+        const t = geom.type;
+        const c = geom.coordinates;
+        if (t === 'LineString') {
+          c.forEach(addCoord);
+        } else if (t === 'MultiLineString') {
+          c.forEach(line => line.forEach(addCoord));
+        } else if (t === 'Polygon') {
+          c.forEach(ring => ring.forEach(addCoord));
+        } else if (t === 'MultiPolygon') {
+          c.forEach(poly => poly.forEach(ring => ring.forEach(addCoord)));
+        }
+      }
+
+      geojson.features.forEach(f => processGeom(f.geometry));
+      return {minX, minY, maxX, maxY};
+    }
+
+    function extractZ(feature) {
+      try {
+        const geom = feature.geometry;
+        let coord = null;
+        if (geom.type === 'LineString') {
+          coord = geom.coordinates[0];
+        } else if (geom.type === 'MultiLineString') {
+          coord = geom.coordinates[0][0];
+        }
+        if (coord && coord.length > 2) return coord[2];
+      } catch (e) {}
+      return null;
+    }
+
+    function updateViewState() {
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      let haveData = false;
+
+      Object.values(dataByKey).forEach(geojson => {
+        if (!geojson) return;
+        const b = getBounds(geojson);
+        minX = Math.min(minX, b.minX);
+        minY = Math.min(minY, b.minY);
+        maxX = Math.max(maxX, b.maxX);
+        maxY = Math.max(maxY, b.maxY);
+        haveData = true;
+      });
+
+      if (!haveData) return;
+
+      const cx = (minX + maxX) / 2;
+      const cy = (minY + maxY) / 2;
+
+      // Solo actualizar target si está en [0, 0, 0] (vista por defecto)
+      if (initialViewState.target[0] === 0 &&
+          initialViewState.target[1] === 0 &&
+          initialViewState.target[2] === 0) {
+        initialViewState = {
+          ...initialViewState,
+          target: [cx, cy, 0]
+        };
+      }
+
+      deckgl.setProps({ initialViewState });
+    }
+
+    function createLayers() {
+      const layers = [];
+
+      LAYERS_CONFIG.forEach(cfg => {
+        const data = dataByKey[cfg.id];
+        if (!data) return;
+
+        const checkbox = document.getElementById('chk_' + cfg.id);
+        if (!checkbox) return;
+
+        // Inicializar opacidad si no existe
+        if (layerOpacities[cfg.id] === undefined) {
+          layerOpacities[cfg.id] = checkbox.checked ? 1 : 0;
+        }
+
+        // Siempre crear todas las capas, deck.gl maneja la opacidad con transiciones
+        layers.push(new GeoJsonLayer({
+          id: cfg.id,
+          data,
+          stroked: true,
+          filled: false,
+          extruded: false,
+          lineWidthUnits: 'pixels',
+          getLineWidth: cfg.width,
+          getLineColor: cfg.color, // Color sin canal alpha
+          coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
+          opacity: layerOpacities[cfg.id], // Usar propiedad opacity nativa de deck.gl
+          transitions: {
+            opacity: {
+              duration: currentTransitionDuration, // Usa la duración actual (1500ms o del JSON)
+              easing: t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
+            }
+          },
+          pickable: layerOpacities[cfg.id] > 0.5,
+          onHover: info => {
+            if (info.object) {
+              const z = extractZ(info.object);
+              infoDiv.innerHTML = `${cfg.name} <br/>` +
+                (z !== null ? `Cota aprox.: ${z} m` : 'Sin Z en esta geometría');
+            } else {
+              infoDiv.innerHTML = 'Rueda: zoom · Arrastrar: mover · Shift+arrastrar: rotar';
+            }
+          }
+        }));
+      });
+
+      deckgl.setProps({ layers });
+    }
+
+    // Variables para animaciones - declaradas ANTES de las funciones que las usan
+    let animationController = null;
+    let currentViewState = null;
+    let layerOpacities = {}; // Opacidades actuales de cada capa (0 a 1)
+    let currentTransitionDuration = 1500; // Duración de transición actual en ms
+
+    // Función para generar los checkboxes dinámicamente
+    function createLayerCheckboxes() {
+      const container = document.getElementById('layers-checkboxes');
+      container.innerHTML = '';
+
+      LAYERS_CONFIG.forEach(cfg => {
+        const label = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = 'chk_' + cfg.id;
+        checkbox.checked = cfg.visible;
+        checkbox.addEventListener('change', (e) => {
+          // Actualizar la opacidad según el estado del checkbox
+          currentTransitionDuration = 1500; // Checkbox manual: 1500ms
+          layerOpacities[cfg.id] = e.target.checked ? 1 : 0;
+          createLayers();
+        });
+
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(' ' + cfg.name));
+        container.appendChild(label);
+      });
+    }
+
+    // Actualizar información de cámara en tiempo real
+    function updateCameraInfo(viewState) {
+      currentViewState = viewState;
+      document.getElementById('cam-target').textContent =
+        `[${viewState.target[0].toFixed(1)}, ${viewState.target[1].toFixed(1)}, ${viewState.target[2].toFixed(1)}]`;
+      document.getElementById('cam-zoom').textContent = viewState.zoom.toFixed(2);
+      document.getElementById('cam-rotation').textContent = viewState.rotationOrbit.toFixed(1) + '°';
+      document.getElementById('cam-pitch').textContent = viewState.rotationX.toFixed(1) + '°';
+    }
+
+    // Escuchar cambios de viewState
+    deckgl.setProps({
+      onViewStateChange: ({viewState}) => {
+        updateCameraInfo(viewState);
+        return viewState;
+      }
+    });
+
+    // Función para animar cambio de capas
+    function animateLayerToggle(layersConfig, duration) {
+      // Configurar duración de transición desde JSON (ya viene en milisegundos desde el controlador)
+      currentTransitionDuration = duration;
+
+      // Actualizar opacidades objetivo para cada capa
+      LAYERS_CONFIG.forEach(cfg => {
+        if (layersConfig.hasOwnProperty(cfg.id)) {
+          layerOpacities[cfg.id] = layersConfig[cfg.id] ? 1 : 0;
+        }
+      });
+
+      // Actualizar checkboxes
+      Object.keys(layersConfig).forEach(layerId => {
+        const checkbox = document.getElementById('chk_' + layerId);
+        if (checkbox) {
+          checkbox.checked = layersConfig[layerId];
+        }
+      });
+
+      // Recrear capas con nuevas opacidades - deck.gl maneja la transición automáticamente
+      createLayers();
+    }
+
+    // Función para animar cámara
+    function animateCamera(targetCamera, progress) {
+      if (!currentViewState) return;
+
+      // Interpolar entre viewState actual y target
+      const interpolated = {
+        target: [
+          currentViewState.target[0] + (targetCamera.target[0] - currentViewState.target[0]) * progress,
+          currentViewState.target[1] + (targetCamera.target[1] - currentViewState.target[1]) * progress,
+          currentViewState.target[2] + (targetCamera.target[2] - currentViewState.target[2]) * progress
+        ],
+        zoom: currentViewState.zoom + (targetCamera.zoom - currentViewState.zoom) * progress,
+        rotationOrbit: currentViewState.rotationOrbit + (targetCamera.rotationOrbit - currentViewState.rotationOrbit) * progress,
+        rotationX: currentViewState.rotationX + (targetCamera.rotationX - currentViewState.rotationX) * progress
+      };
+
+      deckgl.setProps({ initialViewState: interpolated });
+
+      // Si llegamos al final, actualizar el estado base
+      if (progress >= 1) {
+        currentViewState = targetCamera;
+      }
+    }
+
+    // Función para mostrar imagen
+    function showImage(imagePath, duration) {
+      const imageContainer = document.getElementById('image-container');
+      const img = document.getElementById('animation-image');
+
+      img.src = imagePath;
+      imageContainer.classList.add('visible');
+
+      // La imagen se ocultará cuando cambie a la siguiente animación
+    }
+
+    // Función para actualizar barra de progreso
+    function updateProgress(progress, remainingSeconds) {
+      const progressBar = document.getElementById('progress-bar');
+      const timeRemaining = document.getElementById('time-remaining');
+
+      progressBar.style.width = (progress * 100) + '%';
+      timeRemaining.textContent = remainingSeconds.toFixed(1);
+    }
+
+    // Función para actualizar UI de animación actual
+    function updateAnimationUI(animation, index) {
+      // Actualizar título y descripción
+      const infoDiv = document.getElementById('animation-info');
+      const titleDiv = document.getElementById('anim-title');
+      const descDiv = document.getElementById('anim-description');
+
+      titleDiv.textContent = animation.title;
+      descDiv.textContent = animation.description;
+      infoDiv.classList.add('visible');
+
+      // Ocultar imagen si no es tipo image
+      if (animation.type !== 'image') {
+        document.getElementById('image-container').classList.remove('visible');
+      }
+
+      // Resaltar en la lista
+      document.querySelectorAll('.animation-item').forEach((item, idx) => {
+        if (idx === index) {
+          item.classList.add('active');
+          item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    }
+
+    // Configurar eventos de UI
+    function setupAnimationUI() {
+      // Toggle panel
+      const panel = document.getElementById('animation-panel');
+      const toggleBtn = document.getElementById('toggle-panel');
+
+      toggleBtn.addEventListener('click', () => {
+        panel.classList.toggle('collapsed');
+        toggleBtn.textContent = panel.classList.contains('collapsed') ? '▶' : '◀';
+      });
+
+      // Play button
+      document.getElementById('play-btn').addEventListener('click', () => {
+        if (animationController) {
+          animationController.play();
+        }
+      });
+
+      // Pause button
+      document.getElementById('pause-btn').addEventListener('click', () => {
+        if (animationController) {
+          animationController.pause();
+        }
+      });
+
+      // Modal de imagen
+      const imageContainer = document.getElementById('image-container');
+      const modal = document.getElementById('image-modal');
+      const modalImg = document.getElementById('modal-image');
+      const animImg = document.getElementById('animation-image');
+
+      imageContainer.addEventListener('click', () => {
+        modalImg.src = animImg.src;
+        modal.classList.add('visible');
+      });
+
+      modal.addEventListener('click', () => {
+        modal.classList.remove('visible');
+      });
+    }
+
+    // Crear lista de animaciones en el panel
+    function createAnimationList(animations) {
+      const list = document.getElementById('animation-list');
+      list.innerHTML = '';
+
+      animations.forEach((anim, index) => {
+        const item = document.createElement('div');
+        item.className = 'animation-item';
+        item.textContent = `${index + 1}. ${anim.title}`;
+        item.addEventListener('click', () => {
+          if (animationController) {
+            animationController.goToAnimation(index);
+          }
+        });
+        list.appendChild(item);
+      });
+    }
+
+    // Obtener directorio base desde parámetro URL o usar default
+    const urlParams = new URLSearchParams(window.location.search);
+    const sceneDir = urlParams.get('scene') || 'scenes/01-explanacion-horizontal';
+    const configPath = `${sceneDir}/config.json`;
+
+    // Cargar primero la configuración desde el path especificado
+    fetch(configPath)
+      .then(r => {
+        if (!r.ok) throw new Error(`${configPath} no encontrado`);
+        return r.json();
+      })
+      .then(config => {
+        LAYERS_CONFIG = config.layers;
+
+        // Cargar vista inicial desde config si existe
+        if (config.initialViewState) {
+          initialViewState = config.initialViewState;
+        }
+
+        // Crear los checkboxes dinámicamente
+        createLayerCheckboxes();
+
+        // Cargar todos los ficheros GeoJSON
+        return Promise.all(
+          LAYERS_CONFIG.map(cfg =>
+            fetch(cfg.url)
+              .then(r => {
+                if (!r.ok) throw new Error(cfg.url + ' no encontrado');
+                return r.json();
+              })
+              .then(json => ({ id: cfg.id, data: json }))
+              .catch(err => {
+                console.warn('Error cargando', cfg.url, err);
+                return { id: cfg.id, data: null };
+              })
+          )
+        );
+      })
+      .then(results => {
+        results.forEach(r => {
+          dataByKey[r.id] = r.data;
+        });
+        updateViewState();
+        createLayers();
+
+        // Inicializar currentViewState
+        currentViewState = { ...initialViewState };
+
+        // Cargar configuración de animaciones desde el mismo directorio
+        return fetch(`${sceneDir}/animations.json`);
+      })
+      .then(r => {
+        if (!r.ok) throw new Error('animations.json no encontrado');
+        return r.json();
+      })
+      .then(animConfig => {
+        // Inicializar controlador de animaciones
+        animationController = new AnimationController(animConfig);
+
+        // Configurar callbacks
+        animationController.onLayersChange = animateLayerToggle;
+        animationController.onCameraChange = animateCamera;
+        animationController.onImageShow = showImage;
+        animationController.onAnimationChange = updateAnimationUI;
+        animationController.onProgressUpdate = updateProgress;
+
+        // Crear lista de animaciones
+        createAnimationList(animConfig.animations);
+
+        // Configurar UI
+        setupAnimationUI();
+
+        console.log('Sistema de animaciones cargado correctamente');
+      })
+      .catch(err => {
+        console.error('Error cargando configuración o capas:', err);
+        alert('Error cargando archivos de configuración. Revisa la consola.');
+      });
+  </script>
+</body>
+</html>

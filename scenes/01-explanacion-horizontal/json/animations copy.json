@@ -1,0 +1,114 @@
+{
+  "timeBetweenAnimations": 3,
+  "animations": [
+    {
+      "id": "intro",
+      "title": "Introducción al proyecto",
+      "description": "Vista general de todas las capas del trazado. Se muestran las curvas directoras y simples que definen la geometría principal del proyecto.",
+      "duration": 1.5,
+      "type": "layers",
+      "layers": {
+        "directoras": true,
+        "simples": true,
+        "plataforma": true,
+        "linea_paso": false,
+        "desmonte": false,
+        "terraplen": false,
+        "cabecera_talud": false,
+        "directoras_externas": false,
+        "curvas_externas": false
+      }
+    },
+    {
+      "id": "camera_overview",
+      "title": "Vista aérea general",
+      "description": "Movimiento de cámara para obtener una perspectiva cenital del trazado completo, facilitando la comprensión del conjunto.",
+      "duration": 2,
+      "type": "camera",
+      "camera": {
+        "target": [0, 0, 0],
+        "zoom": 1,
+        "rotationOrbit": 0,
+        "rotationX": 90
+      }
+    },
+    {
+      "id": "photo_ejemplo1",
+      "title": "Detalle constructivo - Captura 1",
+      "description": "Fotografía que muestra el detalle de la ejecución en campo. Esta imagen ilustra el proceso constructivo y los elementos principales del proyecto.",
+      "duration": 1.8,
+      "type": "image",
+      "image": "img/captura1.PNG"
+    },
+    {
+      "id": "show_taludes",
+      "title": "Visualización de taludes",
+      "description": "Activación de las capas de desmonte y terraplén. Estas capas muestran las zonas donde se realiza excavación y relleno respectivamente.",
+      "duration": 1.5,
+      "type": "layers",
+      "layers": {
+        "directoras": true,
+        "simples": true,
+        "plataforma": true,
+        "linea_paso": true,
+        "desmonte": true,
+        "terraplen": true,
+        "cabecera_talud": true,
+        "directoras_externas": false,
+        "curvas_externas": false
+      }
+    },
+    {
+      "id": "camera_detail",
+      "title": "Acercamiento a zona de interés",
+      "description": "La cámara se desplaza para mostrar con mayor detalle una zona específica del trazado, permitiendo apreciar la relación entre los diferentes elementos.",
+      "duration": 1.8,
+      "type": "camera",
+      "camera": {
+        "target": [50, 50, 0],
+        "zoom": 2,
+        "rotationOrbit": 45,
+        "rotationX": 60
+      }
+    },
+    {
+      "id": "photo_ejemplo2",
+      "title": "Vista de obra - Captura 2",
+      "description": "Segunda fotografía del proyecto que complementa la información visual. Muestra otra perspectiva del trabajo realizado en campo.",
+      "duration": 2,
+      "type": "image",
+      "image": "img/captura2.PNG"
+    },
+    {
+      "id": "all_layers",
+      "title": "Visualización completa",
+      "description": "Se activan todas las capas disponibles incluyendo directoras externas y curvas externas para mostrar el proyecto en su totalidad.",
+      "duration": 1.5,
+      "type": "layers",
+      "layers": {
+        "directoras": true,
+        "simples": true,
+        "plataforma": true,
+        "linea_paso": true,
+        "desmonte": true,
+        "terraplen": true,
+        "cabecera_talud": true,
+        "directoras_externas": true,
+        "curvas_externas": true
+      }
+    },
+    {
+      "id": "camera_final",
+      "title": "Vista final del proyecto",
+      "description": "Posición de cámara final que ofrece una vista tridimensional equilibrada de todo el conjunto, ideal para apreciar la complejidad del trazado.",
+      "duration": 2,
+      "type": "camera",
+      "camera": {
+        "target": [0, 0, 0],
+        "zoom": 0.5,
+        "rotationOrbit": 30,
+        "rotationX": 60
+      }
+    }
+  ]
+}
