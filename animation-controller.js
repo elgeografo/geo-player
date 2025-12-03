@@ -117,17 +117,24 @@ class AnimationController {
       this.onAnimationChange(animation, index);
     }
 
-    // Ejecutar según el tipo
-    switch (animation.type) {
-      case 'layers':
-        this.executeLayers(animation);
-        break;
-      case 'camera':
-        this.executeCamera(animation);
-        break;
-      case 'image':
-        this.executeImage(animation);
-        break;
+    // Ejecutar según el tipo (o múltiples tipos simultáneamente)
+    // Si tiene 'layers' y 'camera', ejecutar ambos
+    if (animation.layers && animation.camera) {
+      this.executeLayers(animation);
+      this.executeCamera(animation);
+    } else {
+      // Comportamiento original basado en type
+      switch (animation.type) {
+        case 'layers':
+          this.executeLayers(animation);
+          break;
+        case 'camera':
+          this.executeCamera(animation);
+          break;
+        case 'image':
+          this.executeImage(animation);
+          break;
+      }
     }
 
     // Programar siguiente animación si está en play

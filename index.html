@@ -337,7 +337,7 @@
 
   <script src="animation-controller.js"></script>
   <script>
-    const {DeckGL, GeoJsonLayer, OrbitView, COORDINATE_SYSTEM} = deck;
+    const {DeckGL, GeoJsonLayer, TextLayer, OrbitView, COORDINATE_SYSTEM} = deck;
 
     // La configuración de capas se cargará desde config.json
     let LAYERS_CONFIG = [];
@@ -453,35 +453,65 @@
           layerOpacities[cfg.id] = checkbox.checked ? 1 : 0;
         }
 
-        // Siempre crear todas las capas, deck.gl maneja la opacidad con transiciones
-        layers.push(new GeoJsonLayer({
-          id: cfg.id,
-          data,
-          stroked: true,
-          filled: false,
-          extruded: false,
-          lineWidthUnits: 'pixels',
-          getLineWidth: cfg.width,
-          getLineColor: cfg.color, // Color sin canal alpha
-          coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
-          opacity: layerOpacities[cfg.id], // Usar propiedad opacity nativa de deck.gl
-          transitions: {
-            opacity: {
-              duration: currentTransitionDuration, // Usa la duración actual (1500ms o del JSON)
-              easing: t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
+        // Crear TextLayer si layerType === 'text'
+        if (cfg.layerType === 'text') {
+          layers.push(new TextLayer({
+            id: cfg.id,
+            data: data.features,
+            getPosition: d => d.geometry.coordinates,
+            getText: d => d.properties.TEXTSTRING || '',
+            getSize: cfg.textSize || 12,
+            getColor: cfg.color,
+            getAngle: d => -(d.properties.TEXT_ANGLE || 0),
+            getTextAnchor: cfg.textAnchor || 'middle',
+            getAlignmentBaseline: cfg.alignmentBaseline || 'center',
+            coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
+            opacity: layerOpacities[cfg.id],
+            transitions: {
+              opacity: {
+                duration: currentTransitionDuration,
+                easing: t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
+              }
+            },
+            pickable: layerOpacities[cfg.id] > 0.5,
+            fontFamily: 'Arial, sans-serif',
+            fontWeight: 'bold',
+            billboard: true,
+            background: true,
+            backgroundColor: [0, 0, 0, 128],
+            backgroundPadding: [2, 1]
+          }));
+        } else {
+          // GeoJsonLayer por defecto
+          layers.push(new GeoJsonLayer({
+            id: cfg.id,
+            data,
+            stroked: true,
+            filled: false,
+            extruded: false,
+            lineWidthUnits: 'pixels',
+            getLineWidth: cfg.width,
+            getLineColor: cfg.color, // Color sin canal alpha
+            coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
+            opacity: layerOpacities[cfg.id], // Usar propiedad opacity nativa de deck.gl
+            transitions: {
+              opacity: {
+                duration: currentTransitionDuration, // Usa la duración actual (1500ms o del JSON)
+                easing: t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
+              }
+            },
+            pickable: layerOpacities[cfg.id] > 0.5,
+            onHover: info => {
+              if (info.object) {
+                const z = extractZ(info.object);
+                infoDiv.innerHTML = `${cfg.name} <br/>` +
+                  (z !== null ? `Cota aprox.: ${z} m` : 'Sin Z en esta geometría');
+              } else {
+                infoDiv.innerHTML = 'Rueda: zoom · Arrastrar: mover · Shift+arrastrar: rotar';
+              }
             }
-          },
-          pickable: layerOpacities[cfg.id] > 0.5,
-          onHover: info => {
-            if (info.object) {
-              const z = extractZ(info.object);
-              infoDiv.innerHTML = `${cfg.name} <br/>` +
-                (z !== null ? `Cota aprox.: ${z} m` : 'Sin Z en esta geometría');
-            } else {
-              infoDiv.innerHTML = 'Rueda: zoom · Arrastrar: mover · Shift+arrastrar: rotar';
-            }
-          }
-        }));
+          }));
+        }
       });
 
       deckgl.setProps({ layers });
@@ -611,7 +641,7 @@
       const descDiv = document.getElementById('anim-description');
 
       titleDiv.textContent = animation.title;
-      descDiv.textContent = animation.description;
+      descDiv.innerHTML = animation.description;
       infoDiv.classList.add('visible');
 
       // Ocultar imagen si no es tipo image
