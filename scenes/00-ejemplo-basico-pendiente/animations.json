@@ -1,0 +1,146 @@
+{
+  "animations": [
+    {
+      "id": "mostrar_explanacion",
+      "title": "Explanación en pendiente",
+      "description": "Queremos realizar una explanción en pendiente con un grado de inclinación X",
+      "duration": 2,
+      "waitTime": 10,
+      "layers": {
+        "01-AA-SUELO": true,
+        "01-A-EXPLANACION-PENDIENTE-TERRAPLEN": true,
+        "01-B-CONOS-TERRAPLEN-POLIGONOS": false,
+        "01-C-TERRAPLEN":false,
+        "01-C-TERRAPLEN-POLY": false
+      },
+       "camera": {
+        "target": [4267.0, 1407.0, 1.5],
+        "zoom": 3.50,
+        "rotationOrbit": -43,
+        "rotationX": 12.5
+      }
+    },
+    {
+      "id": "mostrar_explanacion_terraplen",
+      "title": "Explanación en pendiente con terraplén",
+      "description": "Suponemos que la explanación tiene pendiente ascendente respecto al plano de comparación",
+      "duration": 2,
+      "waitTime": 10,
+      "layers": {
+        "01-AA-SUELO": true,
+        "01-A-EXPLANACION-PENDIENTE-TERRAPLEN": true,
+        "01-B-CONOS-TERRAPLEN-POLIGONOS": false,
+        "01-C-TERRAPLEN":false,
+        "01-C-TERRAPLEN-POLY": true
+      },
+       "camera": {
+        "target": [4267.0, 1407.0, 1.5],
+        "zoom": 3.50,
+        "rotationOrbit": -43,
+        "rotationX": 12.5
+      }
+    },
+    {
+      "id": "mostrar_explanacion_terraplen_alzado",
+      "title": "Cáculo del terraplen",
+      "description": "Tenemos que calcular cómo se hará el terraplén teneindo en cuanta la pendiente que nos den",
+      "duration": 2,
+      "waitTime": 10,
+      "layers": {
+        "01-AA-SUELO": true,
+        "01-A-EXPLANACION-PENDIENTE-TERRAPLEN": true,
+        "01-B-CONOS-TERRAPLEN-POLIGONOS": false,
+        "01-C-TERRAPLEN":false,
+        "01-C-TERRAPLEN-POLY": true
+      },
+       "camera": {
+        "target": [4267.0, 1407.0, 1.5],
+        "zoom": 3.50,
+        "rotationOrbit": 0,
+        "rotationX": 90
+      }
+    },
+    {
+      "id": "mostrar_conos",
+      "title": "Cáculo del intervalo",
+      "description": "Cáculo del intervalo. Meter Texto",
+      "duration": 2,
+      "waitTime": 10,
+      "layers": {
+        "01-AA-SUELO": true,
+        "01-A-EXPLANACION-PENDIENTE-TERRAPLEN": true,
+        "01-B-CONOS-TERRAPLEN-POLIGONOS": true,
+        "01-C-TERRAPLEN":false,
+        "01-C-TERRAPLEN-POLY": false
+      },
+       "camera": {
+        "target": [4267.0, 1407.0, 1.5],
+        "zoom": 3.50,
+        "rotationOrbit": -43,
+        "rotationX": 12.5
+      }
+    },
+    {
+      "id": "mostrar_conos_con_curvas",
+      "title": "Cáculo del intervalo 2",
+      "description": "Cáculo del intervalo. Meter Texto",
+      "duration": 2,
+      "waitTime": 10,
+      "layers": {
+        "01-AA-SUELO": true,
+        "01-A-EXPLANACION-PENDIENTE-TERRAPLEN": true,
+        "01-B-CONOS-TERRAPLEN-POLIGONOS": true,
+        "01-C-TERRAPLEN":true,
+        "01-C-TERRAPLEN-POLY": false
+      },
+       "camera": {
+        "target": [4267.0, 1407.0, 1.5],
+        "zoom": 3.50,
+        "rotationOrbit": -43,
+        "rotationX": 12.5
+      }
+    },
+    {
+      "id": "mostrar_conos_con_curvas_alzado",
+      "title": "Cáculo del intervalo 3",
+      "description": "Cáculo del intervalo . Meter Texto",
+      "duration": 2,
+      "waitTime": 10,
+      "layers": {
+        "01-AA-SUELO": true,
+        "01-A-EXPLANACION-PENDIENTE-TERRAPLEN": true,
+        "01-B-CONOS-TERRAPLEN-POLIGONOS": true,
+        "01-C-TERRAPLEN":true,
+        "01-C-TERRAPLEN-POLY": false
+      },
+       "camera": {
+        "target": [4267.0, 1407.0, 1.5],
+        "zoom": 3.50,
+        "rotationOrbit": 0,
+        "rotationX": 90
+      }
+    }
+    ,
+    {
+      "id": "mostrar_conos_con_curvas_perspectiva",
+      "title": "Cáculo del intervalo 4",
+      "description": "Cáculo del intervalo . Meter Texto",
+      "duration": 2,
+      "waitTime": 10,
+      "layers": {
+        "01-AA-SUELO": true,
+        "01-A-EXPLANACION-PENDIENTE-TERRAPLEN": true,
+        "01-B-CONOS-TERRAPLEN-POLIGONOS": true,
+        "01-C-TERRAPLEN":true,
+        "01-C-TERRAPLEN-POLY": true
+      },
+       "camera": {
+        "target": [4267.0, 1407.0, 1.5],
+        "zoom": 3.50,
+        "rotationOrbit": -43,
+        "rotationX": 12.5
+      }
+    }
+   
+  ]
+}

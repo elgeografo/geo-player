@@ -487,11 +487,12 @@
             id: cfg.id,
             data,
             stroked: true,
-            filled: false,
+            filled: cfg.fillColor !== undefined,
             extruded: false,
             lineWidthUnits: 'pixels',
             getLineWidth: cfg.width,
             getLineColor: cfg.color, // Color sin canal alpha
+            getFillColor: cfg.fillColor ? [...cfg.fillColor, Math.round(255 * (cfg.fillOpacity || 1) * layerOpacities[cfg.id])] : [0, 0, 0, 0],
             coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
             opacity: layerOpacities[cfg.id], // Usar propiedad opacity nativa de deck.gl
             transitions: {
