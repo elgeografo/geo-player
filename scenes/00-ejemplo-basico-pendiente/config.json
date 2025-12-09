@@ -20,9 +20,39 @@
       "id": "01-A-EXPLANACION-PENDIENTE-TERRAPLEN",
       "url": "scenes/00-ejemplo-basico-pendiente/json/01-A-EXPLANACION-PENDIENTE-TERRAPLEN.json",
       "name": "Explanación en pendiente terraplén",
-      "color": [0, 255, 0],
+      "color": [255, 255, 255],
       "width": 6,
       "visible": true
+    },
+    {
+      "id": "01-A-EXPLANACION-PENDIENTE-TERRAPLEN-COTAS",
+      "url": "scenes/00-ejemplo-basico-pendiente/json/01-A-EXPLANACION-PENDIENTE-TERRAPLEN-COTAS.json",
+      "name": "Explanación en pendiente terraplén cotas",
+      "color": [255, 255, 255],
+      "layerType": "text",
+      "textSize": 25,
+      "textAnchor": "start",
+      "alignmentBaseline": "bottom",
+      "visible": false
+    },
+    {
+      "id": "01-AB-INTERVALO-EQUIDISTANCIA",
+      "url": "scenes/00-ejemplo-basico-pendiente/json/01-AB-INTERVALO-EQUIDISTANCIA.json",
+      "name": "Intervalo-Equidistancia",
+      "color": [255, 255, 0],
+      "width": 6,
+      "visible": true
+    },
+    {
+      "id": "01-AB-INTERVALO-EQUIDISTANCIA-TEXTO",
+      "url": "scenes/00-ejemplo-basico-pendiente/json/01-AB-INTERVALO-EQUIDISTANCIA-TEXTO.json",
+      "name": "Intervalo-Equidistancia-Texto",
+      "color": [255, 255, 0],
+      "layerType": "text",
+      "textSize": 25,
+      "textAnchor": "start",
+      "alignmentBaseline": "bottom",
+      "visible": false
     },
     {
       "id": "01-B-CONOS-TERRAPLEN-POLIGONOS",
@@ -52,3 +82,4 @@
     }
   ]
 }
+

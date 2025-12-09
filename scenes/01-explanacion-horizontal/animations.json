@@ -99,7 +99,7 @@
       "duration": 1.8,
       "waitTime": 5,
       "type": "image",
-      "image": "scenes/01-explanacion-horizontal/img/cierreDesmonte1y2.PNG"
+      "image": "scenes/01-explanacion-horizontal/img/CierreDesmonte1y2.PNG"
     },
     {
       "id": "show_taludes",

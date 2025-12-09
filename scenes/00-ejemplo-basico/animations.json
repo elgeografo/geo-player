@@ -94,14 +94,14 @@
         "00_B_EXPLANACION_HORIZONTAL_TERRAPLEN": true,
         "00_B_EXPLANACION_HORIZONTAL_TERRAPLEN_COTAS":true,
         "00_C_EXPLANACION_HORIZONTAL_DESMONTE": false,
-        "01_A_TERRAPLEN_EN_EXP_HORIZ": false,
+        "01_A_TERRAPLEN_EN_EXP_HORIZ": true,
         "01_B_DESMONTE_EN_EXP_HORIZ": false
       },
       "camera": {
-        "target": [4153.7, 1403.7, -1.7],
+        "target": [4155.1, 1403.3, -1.7],
         "zoom": 3.50,
-        "rotationOrbit": 0,
-        "rotationX": 90
+        "rotationOrbit": -18.7,
+        "rotationX": 30
       }
     },
     {
@@ -137,15 +137,22 @@
         "00_A_SUELO": true,
         "00_AA_EXPLANACION_HORIZONTAL_SUELO": false,
         "00_B_EXPLANACION_HORIZONTAL_TERRAPLEN": false,
+        "00_B_EXPLANACION_HORIZONTAL_TERRAPLEN_COTAS":false,
         "00_C_EXPLANACION_HORIZONTAL_DESMONTE": true,
         "01_A_TERRAPLEN_EN_EXP_HORIZ": false,
         "01_B_DESMONTE_EN_EXP_HORIZ": false
+      },
+      "camera": {
+        "target": [4153.8, 1400.2, -1.7],
+        "zoom": 3.50,
+        "rotationOrbit": 28.5,
+        "rotationX": 5.5
       }
     },
     {
-      "id": "mostrar_terraplen_exp_horiz",
-      "title": "Mostrando terraplén en explanación horizontal",
-      "description": "Se muestra el terraplén en explanación horizontal en color verde.",
+      "id": "mostrar_desmonte_curvas",
+      "title": "Desmonte con curvado",
+      "description": "El desmonte implica quitar tierra. Ocurre cuando la explanación está por debajo de la cota",
       "duration": 2,
       "waitTime": 4,
       "type": "layers",
@@ -153,25 +160,16 @@
         "00_A_SUELO": true,
         "00_AA_EXPLANACION_HORIZONTAL_SUELO": false,
         "00_B_EXPLANACION_HORIZONTAL_TERRAPLEN": false,
-        "00_C_EXPLANACION_HORIZONTAL_DESMONTE": false,
-        "01_A_TERRAPLEN_EN_EXP_HORIZ": true,
-        "01_B_DESMONTE_EN_EXP_HORIZ": false
-      }
-    },
-    {
-      "id": "mostrar_desmonte_exp_horiz",
-      "title": "Mostrando desmonte en explanación horizontal",
-      "description": "Se muestra el desmonte en explanación horizontal en color rojo.",
-      "duration": 2,
-      "waitTime": 4,
-      "type": "layers",
-      "layers": {
-        "00_A_SUELO": true,
-        "00_AA_EXPLANACION_HORIZONTAL_SUELO": false,
-        "00_B_EXPLANACION_HORIZONTAL_TERRAPLEN": false,
-        "00_C_EXPLANACION_HORIZONTAL_DESMONTE": false,
+        "00_B_EXPLANACION_HORIZONTAL_TERRAPLEN_COTAS":false,
+        "00_C_EXPLANACION_HORIZONTAL_DESMONTE": true,
         "01_A_TERRAPLEN_EN_EXP_HORIZ": false,
         "01_B_DESMONTE_EN_EXP_HORIZ": true
+      },
+      "camera": {
+        "target": [4153.8, 1400.2, -1.7],
+        "zoom": 3.50,
+        "rotationOrbit": -24.2,
+        "rotationX": -8.2
       }
     }
   ]

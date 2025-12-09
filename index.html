@@ -288,7 +288,8 @@
     </div>
 
     <div id="info">
-      Rueda: zoom · Arrastrar: mover · Shift+arrastrar: rotar
+      Rueda: zoom · Arrastrar: mover · Shift+arrastrar: rotar<br>
+      ←→ o PageUp/PageDown: Navegación
     </div>
   </div>
 
@@ -453,6 +454,13 @@
           layerOpacities[cfg.id] = checkbox.checked ? 1 : 0;
         }
 
+        // No renderizar capas completamente invisibles (después de la transición)
+        // Durante la transición (opacity entre 0 y 1), la capa se renderiza normalmente
+        const targetOpacity = layerOpacities[cfg.id];
+        if (targetOpacity === 0 && !isLayerTransitioning(cfg.id)) {
+          return; // Saltar esta capa completamente
+        }
+
         // Crear TextLayer si layerType === 'text'
         if (cfg.layerType === 'text') {
           layers.push(new TextLayer({
@@ -523,6 +531,31 @@
     let currentViewState = null;
     let layerOpacities = {}; // Opacidades actuales de cada capa (0 a 1)
     let currentTransitionDuration = 1500; // Duración de transición actual en ms
+    let layerTransitions = {}; // Tracks ongoing transitions: {layerId: endTime}
+
+    // Verifica si una capa está en transición
+    function isLayerTransitioning(layerId) {
+      const endTime = layerTransitions[layerId];
+      if (!endTime) return false;
+
+      const now = performance.now();
+      if (now >= endTime) {
+        // Transición terminada, limpiar
+        delete layerTransitions[layerId];
+        return false;
+      }
+      return true;
+    }
+
+    // Marca una capa como en transición
+    function startLayerTransition(layerId, duration) {
+      layerTransitions[layerId] = performance.now() + duration;
+
+      // Después de que termine la transición, forzar re-render para eliminar capa
+      setTimeout(() => {
+        createLayers();
+      }, duration + 50); // +50ms de margen
+    }
 
     // Función para generar los checkboxes dinámicamente
     function createLayerCheckboxes() {
@@ -538,7 +571,16 @@
         checkbox.addEventListener('change', (e) => {
           // Actualizar la opacidad según el estado del checkbox
           currentTransitionDuration = 1500; // Checkbox manual: 1500ms
-          layerOpacities[cfg.id] = e.target.checked ? 1 : 0;
+          const newOpacity = e.target.checked ? 1 : 0;
+          const oldOpacity = layerOpacities[cfg.id];
+
+          layerOpacities[cfg.id] = newOpacity;
+
+          // Registrar transición si cambia la opacidad
+          if (oldOpacity !== newOpacity) {
+            startLayerTransition(cfg.id, 1500);
+          }
+
           createLayers();
         });
 
@@ -574,7 +616,15 @@
       // Actualizar opacidades objetivo para cada capa
       LAYERS_CONFIG.forEach(cfg => {
         if (layersConfig.hasOwnProperty(cfg.id)) {
-          layerOpacities[cfg.id] = layersConfig[cfg.id] ? 1 : 0;
+          const newOpacity = layersConfig[cfg.id] ? 1 : 0;
+          const oldOpacity = layerOpacities[cfg.id];
+
+          layerOpacities[cfg.id] = newOpacity;
+
+          // Si la capa está cambiando de opacidad, registrar transición
+          if (oldOpacity !== newOpacity) {
+            startLayerTransition(cfg.id, duration);
+          }
         }
       });
 
@@ -702,6 +752,40 @@
       });
     }
 
+    // Navegación con teclado (para mandos de presentaciones)
+    function setupKeyboardNavigation() {
+      document.addEventListener('keydown', (event) => {
+        // Ignorar si el usuario está escribiendo en un input
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+          return;
+        }
+
+        if (!animationController) return;
+
+        // Teclas para avanzar (→, PageDown, Space)
+        if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
+          event.preventDefault();
+          animationController.next();
+        }
+        // Teclas para retroceder (←, PageUp)
+        else if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
+          event.preventDefault();
+          animationController.previous();
+        }
+        // Tecla Home: ir al inicio
+        else if (event.key === 'Home') {
+          event.preventDefault();
+          animationController.goToAnimation(0);
+        }
+        // Tecla End: ir al final
+        else if (event.key === 'End') {
+          event.preventDefault();
+          const lastIndex = animationController.animations.length - 1;
+          animationController.goToAnimation(lastIndex);
+        }
+      });
+    }
+
     // Crear lista de animaciones en el panel
     function createAnimationList(animations) {
       const list = document.getElementById('animation-list');
@@ -791,6 +875,9 @@
 
         // Configurar UI
         setupAnimationUI();
+
+        // Configurar navegación con teclado
+        setupKeyboardNavigation();
 
         console.log('Sistema de animaciones cargado correctamente');
       })

@@ -73,6 +73,26 @@ class AnimationController {
   }
 
   /**
+   * Avanza a la siguiente animación
+   */
+  next() {
+    const nextIndex = this.currentIndex + 1;
+    if (nextIndex < this.animations.length) {
+      this.goToAnimation(nextIndex);
+    }
+  }
+
+  /**
+   * Retrocede a la animación anterior
+   */
+  previous() {
+    const prevIndex = this.currentIndex - 1;
+    if (prevIndex >= 0) {
+      this.goToAnimation(prevIndex);
+    }
+  }
+
+  /**
    * Salta a una animación específica
    */
   goToAnimation(index) {

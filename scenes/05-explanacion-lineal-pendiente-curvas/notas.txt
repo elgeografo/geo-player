@@ -1,0 +1,17 @@
+Notas
+Cálculo de la equidistancia: 1 metro
+Creamos capa 01_Explanacion y con offset (5 metros por cada lado) creamos la explanación
+creamos capa 02_pendiente_explanacion y calculamos las nuevas curvas de nivel
+	pentiente = equidistancia (dv) / intervalo -> I = 1/0.03 = 33.3 metros
+	Para poner un punto cada 33 metros a lo largo del eje usamos el comando measure (chatgpt)
+		Escribe MEASURE en la línea de comandos.
+		Selecciona tu eje (línea).
+		AutoCAD pedirá la distancia: escribe 33.3 y Enter.
+		AutoCAD colocará puntos cada 33.3 m desde el inicio de la línea.
+	Creamos las nuevas curvas de nivel haciendo snap al nodo y a la perpendicular de la recta. (Despues Extend para alargarla hacia el otro lado)
+	
+Creamos la capa 03_linea_paso y calculamos donde hacemos desmonte y donde terraplen
+
+	terraplen del 10 % Intervalo = 1/0.1 = 10
+	desmonte del 25 % Intervalo = 1/0.25 = 4
+	
